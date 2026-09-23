@@ -8,7 +8,19 @@ on:
       version:
         description: "Version to publish (optional, defaults to tag or package.json)"
         required: false
-
+      ref:
+        description: "Git ref to check out"
+        required: false
+  workflow_call:
+    inputs:
+      version:
+        description: "Version to publish (optional, defaults to tag or package.json)"
+        required: false
+        type: string
+      ref:
+        description: "Git ref to check out"
+        required: false
+        type: string
 permissions:
   contents: read
   id-token: write
@@ -21,6 +33,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref != '' && inputs.ref || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24

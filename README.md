@@ -49,7 +49,17 @@ Expected behavior:
 
 ## Updating Skills
 
-Skills are vendored from `obra/superpowers` to ensure zero runtime network dependencies and clean npm packaging:
+### Automatic Sync & Release
+
+A scheduled GitHub Action (`.github/workflows/sync-and-publish.yml`) runs daily at 02:00 UTC (and can be triggered manually via `workflow_dispatch`). When upstream changes are detected:
+1. Tests are verified with `npm test`.
+2. Patch version is bumped in `package.json`.
+3. Changes and tags are committed/pushed to `main`.
+4. GitHub release is created and published to npm and GitHub Packages.
+
+### Manual Sync
+
+To sync manually:
 
 ```bash
 # Sync from main or specified ref/tag
