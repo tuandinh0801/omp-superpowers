@@ -1,0 +1,47 @@
+name: Publish npm package
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (optional, defaults to tag or package.json)"
+        required: false
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+jobs:
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Upgrade npm to >= 11.5.1 for OIDC Trusted Publishing
+        run: |
+          npm install -g npm@latest
+          echo "Node: $(node -v), npm: $(npm -v)"
+      - name: Sync version from release tag or input
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [ -z "$VERSION" ] && [[ "${GITHUB_REF_NAME}" =~ ^v[0-9] ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          if [ -n "$VERSION" ]; then
+            echo "Setting package.json version to $VERSION"
+            npm version "$VERSION" --no-git-tag-version --allow-same-version
+          fi
+      - run: npm publish --access public --provenance || echo "Version already published on npmjs.org, continuing to GitHub Packages..."
+      - name: Publish to GitHub Packages
+        run: |
+          npm pkg set name="@tuandinh0801/omp-superpowers"
+          npm config set //npm.pkg.github.com/:_authToken="${{ secrets.GITHUB_TOKEN }}"
+          npm publish --registry=https://npm.pkg.github.com
