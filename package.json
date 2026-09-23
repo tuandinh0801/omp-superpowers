@@ -1,0 +1,14 @@
+{
+  "name": "omp-superpowers",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Superpowers skills + using-superpowers bootstrap, native to oh-my-pi (omp).",
+  "keywords": ["omp-package", "omp-extension", "superpowers", "skills", "tdd", "brainstorming"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/tuandinh0801/omp-superpowers.git" },
+  "files": ["extensions", "skills", "README.md", "SUPERPOWERS_REF"],
+  "scripts": { "test": "node --experimental-strip-types tests/bootstrap-check.mjs" },
+  "publishConfig": { "access": "public" },
+  "peerDependencies": { "@oh-my-pi/pi-coding-agent": "^18.1.20" },
+  "omp": { "extensions": ["./extensions/superpowers.ts"] }
+}
